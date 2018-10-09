@@ -1,11 +1,12 @@
-M'A?J1.R;=SRM>X92\^=?V,$*]JQ/P\2/P!>_8]?HTB!B_J!9<1,^Y]MH':B@
-M8V@GB8!Z5 B:OY$5QB"7_:)R#H@4^]D7F20[W_-%8"'1MRK- ^G^44)",315
-MV75:V/R SIS^ I#I$'P5,I,?U!%L<72@?#4:+.I:$DRO&<]648'KUOGP3^SY
-M5Y)=*:H^I\"6BT=QAQ5I_R(\EFX@R&4BO(141NQ@U(NM7?"T@1]">\S47Q5F
-MO/7M,V+ 6=!L%[-9;=,SKRAT$!.\24!UB179C^/7;]%CG?:\W]S0?4@35A,A
-M?T54"$(),5:[J(A(%MK)MRG+W F%*6T=C)HV:1>2Q#IR"Y$,[<#JT#2L8/&@
-M.6/F4F7,@\P;)$OIC85\WP)[6D4X'U$$(G)-=EM>^H(4%I&H,L>WFJG% L]I
-MG@(M0_KVRA7PVDKBE#_$9@>NL_<3Z\V*1^RJ_D,]RJ]+&\E3/E)3_@ET@5]I
-MULZT8[!$TAV:S3O>4H;Q(?*2T=<GJY5/5"O)4KXG[-,+685,;2?U'+(80.7"
-+U6>.;B)9KT-$H \!
-`
+include ~/toolsets/tulip/tulip-v4.hsl
+include ~/toolsets/tulip/get_tlp_deps.hsl
+
+local var sources type list;
+var deps type string;
+
+project tabs : toolset "tulip-v4" : dependencies $deps : $sources;
+
+tabs.prologue() {
+    $sources.ls(".*\\.tlp$");
+    $deps = get_tlp_deps($sources);
+}
