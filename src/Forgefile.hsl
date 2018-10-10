@@ -7,6 +7,9 @@ var deps type string;
 project tabs : toolset "tulip-v4" : dependencies $deps : $sources;
 
 tabs.prologue() {
-    $sources.ls(".*\\.tlp$");
-    $deps = get_tlp_deps($sources);
+    $sources = hefesto.sys.get_option("tlp");
+    if ($sources.count() == 0) {
+        $sources.ls(".*\\.tlp$");
+        $deps = get_tlp_deps($sources);
+    }
 }
