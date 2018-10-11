@@ -7,9 +7,54 @@ var deps type string;
 project tabs : toolset "tulip-v4" : dependencies $deps : $sources;
 
 tabs.prologue() {
+    var option type list;
+
+    $option = hefesto.sys.get_option("add-tab");
+
+    if ($option.count() > 0) {
+        var tab type string;
+        $tab = $option.item(0);
+        hefesto.project.abort(add_tab($tab));
+    }
+
     $sources = hefesto.sys.get_option("tlp");
+
     if ($sources.count() == 0) {
         $sources.ls(".*\\.tlp$");
         $deps = get_tlp_deps($sources);
     }
+}
+
+local function add_tab(filename type string) : result type int {
+    var errno type int;
+
+    $errno = hefesto.sys.run("blackcat add " + main_tab_file($filename) + " part/" + part_pattern($filename));
+
+    if ($errno != 0) {
+        result $errno;
+    }
+
+    $errno = hefesto.sys.run("blackcat lock");
+
+    if ($errno != 0) {
+        result $errno;
+    }
+
+    $errno = hefesto.sys.run("git add " + main_tab_file($filename) + " part/" + part_pattern($filename));
+
+    result $errno;
+}
+
+local function main_tab_file(filename type string) : result type string {
+    if ($filename.match("\\.tlp$") == 0) {
+        $filename = $filename + ".tlp";
+    }
+    result $filename;
+}
+
+local function part_pattern(filename type string) : result type string {
+    if ($filename.match(".*tlp$") == 1) {
+        $filename.replace("\\.tlp$", "");
+    }
+    result $filename + "-*.tlp";
 }
