@@ -25,25 +25,23 @@ tabs.prologue() {
 
 local function add_tabs(filenames type list) : result type int {
     var f type int;
-    var errno type int;
-
-    $errno = 0;
+    var file_list type string;
 
     $f = 0;
-    while ($errno == 0 && $f < $filenames.count()) {
+    while ($f < $filenames.count()) {
         var filename type string;
         $filename = $filenames.item($f);
-        $errno = add_tab($filename);
+        $file_list = $file_list + main_tab_file($filename) + " part/" + part_pattern($filename) + " ";
         $f = $f + 1;
     }
 
-    result $errno;
+    result do_add_tab($file_list);
 }
 
-local function add_tab(filename type string) : result type int {
+local function do_add_tab(file_list type string) : result type int {
     var errno type int;
 
-    $errno = hefesto.sys.run("blackcat add " + main_tab_file($filename) + " part/" + part_pattern($filename));
+    $errno = hefesto.sys.run("blackcat add " + $file_list);
 
     if ($errno != 0) {
         result $errno;
@@ -55,7 +53,7 @@ local function add_tab(filename type string) : result type int {
         result $errno;
     }
 
-    $errno = hefesto.sys.run("git add " + main_tab_file($filename) + " part/" + part_pattern($filename));
+    $errno = hefesto.sys.run("git add " + $file_list);
 
     result $errno;
 }
