@@ -41,13 +41,7 @@ local function add_tabs(filenames type list) : result type int {
 local function do_add_tab(file_list type string) : result type int {
     var errno type int;
 
-    $errno = hefesto.sys.run("blackcat add " + $file_list);
-
-    if ($errno != 0) {
-        result $errno;
-    }
-
-    $errno = hefesto.sys.run("blackcat lock");
+    $errno = hefesto.sys.run("blackcat add " + $file_list + " --lock");
 
     if ($errno != 0) {
         result $errno;
