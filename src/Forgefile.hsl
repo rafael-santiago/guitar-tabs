@@ -40,6 +40,7 @@ local function add_tabs(filenames type list) : result type int {
 
 local function do_add_tab(file_list type string) : result type int {
     var errno type int;
+    var rebase type list;
 
     $errno = hefesto.sys.run("blackcat add " + $file_list + " --lock");
 
@@ -47,7 +48,11 @@ local function do_add_tab(file_list type string) : result type int {
         result $errno;
     }
 
-    $errno = hefesto.sys.run("git add " + $file_list);
+    $rebase = hefesto.sys.get_option("rebase");
+
+    if ($rebase.count() > 0) {
+        $errno = hefesto.sys.run("git add " + $file_list);
+    }
 
     result $errno;
 }
