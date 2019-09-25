@@ -1,1 +1,5 @@
 Lousy guitar tabs.
+
+--
+* Generate guitar tab: hefesto --tlp=<main-tlp-file>
+* Add new guitar tab: hefesto --add-tab=<main-tlp-file>
