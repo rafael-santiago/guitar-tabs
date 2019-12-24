@@ -1,5 +1,6 @@
 include ~/toolsets/tulip/tulip-v4.hsl
 include ~/toolsets/tulip/get_tlp_deps.hsl
+include ~/fsutil.hsl
 
 local var sources type list;
 var deps type string;
@@ -21,6 +22,36 @@ tabs.prologue() {
         $sources.ls(".*\\.tlp$");
         $deps = get_tlp_deps($sources);
     }
+
+    $option = hefesto.sys.get_option("rebase");
+
+    if ($option.count() > 0) {
+        if (rebase() != 0) {
+            hefesto.sys.echo("ERROR: Rebase was incomplete.\n");
+            hefesto.project.abort(1);
+        } else {
+            hefesto.project.abort(0);
+        }
+    }
+}
+
+local function rebase() : result type int {
+    var tlp type list;
+    var t_nr type int;
+    var t type int;
+
+    $tlp.ls(".*\\.tlp$");
+    $t_nr = $tlp.count();
+
+    while ($t < $t_nr) {
+        var filename type string;
+        $filename = $tlp.item(0);
+        $tlp.add_item(filenamefrompath($filename));
+        $tlp.del_index(0);
+        $t = $t + 1;
+    }
+
+    result add_tabs($tlp);
 }
 
 local function add_tabs(filenames type list) : result type int {

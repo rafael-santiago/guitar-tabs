@@ -1,12 +1,11 @@
-M,0;4&/1^GW0=>@8COIA^%:2QR"OGFYM:(8^Y13A"A/>GB3S6KT-A,4N:_N-U
-M;B@S&/[2(W)0:=UOI)IIB?BL7#9[(ZX%)KTOJAUCY8)04'&+ZS>;"OSDV;. 
-MBN!A-8TBU%;.7,\)H[]&/2+$!XJWH4/+:4Q0H)TP_  'KZ ;&[,MTKP1/D A
-M 6+7&!:]Y07E$HTT%%B/FD?4:+?JA0UC!2+N/)+7)TP)]*]R'SH62)545F,.
-MPZ'?-PFBL^=2A_6%].L^JBI%HE2DZ6A7*$EB;3S-/$)FVE5$$%JPY3)B,KG1
-MU,ON FUD[5GWJHYDMJ+>M]?C1E.S:_9"_!SG" ZT $[$H^!.'V+*)SY?.[>2
-M_?RF$1QE*B2N&_L&[DE3=GW?8?^NBNVP)Z.IW.DE\0$Z@7N0Y4QAB:\DB]'W
-M4.98-P-XGJT=/^O-'ZC ?EA\LV&7IK4]2@$G/$]E+ [[Y8/BA*(UF=5S_>*!
-M1I:LHF,$_0B-E&.TJ8-^ 7N^+9P.*,=?XB]U6,8S?X%Z+VY6X/ZD9B5#BLI$
-KZFXK"K=>N- L3W74/\V*H;<M##='++V^+NPW1(L2"!J68^"2G$W18[:V& $!
+.song{"I need somebody - Stooges"}
+.transcriber{"Rafael Santiago"}
 
-`
+.literal{"[Riff]"}
+.append{"part/i-need-somebody-riff.tlp"};
+
+.literal{"[Verses]"}
+.append{"part/i-need-somebody-verses.tlp"};
+
+.literal{"[Chorus]"}
+.append{"part/i-need-somebody-chorus.tlp"}
