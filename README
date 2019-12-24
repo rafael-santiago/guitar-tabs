@@ -4,3 +4,4 @@ Lousy guitar tabs.
 * Generate guitar tab: hefesto --tlp=<main-tlp-file>
 * Add new guitar tab: hefesto --add-tab=<main-tlp-file>
 * Generate all tabs: hefesto
+* Rebase: hefesto --rebase
