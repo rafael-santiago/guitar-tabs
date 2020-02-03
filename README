@@ -3,5 +3,6 @@ Lousy guitar tabs.
 --
 * Generate guitar tab: hefesto --tlp=<main-tlp-file>
 * Add new guitar tab: hefesto --add-tab=<main-tlp-file>
-* Generate all tabs: hefesto
+* Generate all plain tabs: hefesto
+* Generate encrypted tab(s): hefesto --gen-tab=<main-tlp-file-list> [--out-format=<pdf (default) | ps | txt | svg | html>]
 * Rebase: hefesto --rebase

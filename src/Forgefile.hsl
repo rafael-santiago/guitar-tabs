@@ -16,6 +16,12 @@ tabs.prologue() {
         hefesto.project.abort(add_tabs($option));
     }
 
+    $option = hefesto.sys.get_option("gen-tab");
+
+    if ($option.count() > 0) {
+        hefesto.project.abort(gen_tabs($option));
+    }
+
     $sources = hefesto.sys.get_option("tlp");
 
     if ($sources.count() == 0) {
@@ -54,6 +60,43 @@ local function rebase() : result type int {
     result add_tabs($tlp);
 }
 
+local function blackcat_flist(filenames type list) : result type string {
+    var flist type string;
+    var f type int;
+
+    $f = 0;
+    while ($f < $filenames.count()) {
+        var filename type string;
+        $filename = $filenames.item($f);
+        $flist = $flist + main_tab_file($filename) + " part/" + part_pattern($filename) + " ";
+        $f = $f + 1;
+    }
+
+    result $flist;
+}
+
+local function gen_tabs(filenames type list) : result type int {
+    var exit_code type int;
+    var ext type string;
+
+    if (get_out_format($ext) == 0) {
+        result 1;
+    }
+
+    $exit_code = do_blackcat_unlock($filenames);
+
+    if ($exit_code == 0) {
+        $exit_code = do_gen_tabs($filenames, $ext);
+        if (do_git_checkout($filenames) != 0) {
+            hefesto.sys.echo("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
+                             "WARN: Git checkout has failed. Try to redo it on your own before pushing anything!\n" +
+                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+        }
+    }
+
+    result $exit_code;
+}
+
 local function add_tabs(filenames type list) : result type int {
     var f type int;
     var file_list type string;
@@ -86,6 +129,94 @@ local function do_add_tab(file_list type string) : result type int {
     }
 
     result $errno;
+}
+
+local function do_blackcat_unlock(filenames type list) : result type int {
+    result hefesto.sys.run("blackcat unlock " + blackcat_flist($filenames));
+}
+
+local function do_git_checkout(filenames type list) : result type int {
+    result hefesto.sys.run("git checkout " + blackcat_flist($filenames) + "../.bcrepo/CATALOG");
+}
+
+local function do_gen_tabs(mainfiles type list, ext type string) : result type int {
+    var exit_code type int;
+    var m type int;
+
+    $exit_code = 0;
+    $m = 0;
+
+    if (isdir($ext) == 0) {
+        if (hefesto.sys.mkdir($ext) != 0) {
+            hefesto.sys.echo("ERROR: Unable to create output directory '" + $ext + "'. Aborted.\n");
+            result 1;
+        }
+    }
+
+    hefesto.sys.echo("\n");
+
+    while ($exit_code == 0 && $m < $mainfiles.count()) {
+        var mainfile type string;
+        $mainfile = $mainfiles.item($m);
+
+        var outfile type string;
+        $outfile = out_tab_file($mainfile, $ext);
+
+        if ($ext != "html") {
+            $exit_code = hefesto.sys.run("tulip --tlp=" + main_tab_file($mainfile) + " --out=" + $outfile);
+        } else {
+            $exit_code = hefesto.sys.run("tulip --tlp=" + main_tab_file($mainfile) + " --out=" + $outfile + " --svg");
+        }
+
+        if ($exit_code == 0) {
+            hefesto.sys.echo("INFO: TAB of '" + $mainfile + "' generated at '" + $outfile + "'.\n");
+        } else {
+            hefesto.sys.echo("ERROR: Unable to generate TAB for '" + $mainfile + "'. Aborted.\n");
+        }
+
+        $m = $m + 1;
+    }
+
+    result $exit_code;
+}
+
+local function get_out_format(ext type string) : result type int {
+    var supp_exts type list;
+    var no_error type int;
+
+    $no_error = 0;
+
+    $supp_exts.add_item("pdf");
+    $supp_exts.add_item("ps");
+    $supp_exts.add_item("svg");
+    $supp_exts.add_item("txt");
+    $supp_exts.add_item("html");
+
+    var option type list;
+    $option = hefesto.sys.get_option("out-format");
+
+    if ($option.count() == 0) {
+        $ext = "pdf";
+        $no_error = 1;
+    } else {
+        $ext = $option.item(0);
+        if ($supp_exts.index_of($ext) == -1) {
+            hefesto.sys.echo("ERROR: Unknown output format : '" + $ext + "'.\n");
+            $ext = "";
+        } else {
+            $no_error = 1;
+        }
+    }
+
+    hefesto.sys.byref($ext);
+    result $no_error;
+}
+
+local function out_tab_file(filename type string, ext type string) : result type string {
+    if ($filename.match("\\.tlp$") == 1) {
+        $filename.replace("\\.tlp$", "");
+    }
+    result hefesto.sys.make_path($ext, $filename + "." + $ext);
 }
 
 local function main_tab_file(filename type string) : result type string {
