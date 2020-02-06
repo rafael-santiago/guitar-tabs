@@ -162,11 +162,15 @@ local function do_gen_tabs(mainfiles type list, ext type string) : result type i
         var outfile type string;
         $outfile = out_tab_file($mainfile, $ext);
 
-        if ($ext != "html") {
-            $exit_code = hefesto.sys.run("tulip --tlp=" + main_tab_file($mainfile) + " --out=" + $outfile);
-        } else {
-            $exit_code = hefesto.sys.run("tulip --tlp=" + main_tab_file($mainfile) + " --out=" + $outfile + " --svg");
+        var additional_option type string;
+
+        if ($ext == "html") {
+            $additional_option = " --svg --svg-embed-font";
+        } else if ($ext == "svg") {
+            $additional_option = "--svg-embed-font";
         }
+
+        $exit_code = hefesto.sys.run("tulip --tlp=" + main_tab_file($mainfile) + " --out=" + $outfile + $additional_option);
 
         if ($exit_code == 0) {
             hefesto.sys.echo("INFO: TAB of '" + $mainfile + "' generated at '" + $outfile + "'.\n");
