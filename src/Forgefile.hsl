@@ -1,11 +1,11 @@
-include ~/toolsets/tulip/tulip-v4.hsl
+include ~/toolsets/tulip/tulip-v7.hsl
 include ~/toolsets/tulip/get_tlp_deps.hsl
 include ~/fsutil.hsl
 
 local var sources type list;
 var deps type string;
 
-project tabs : toolset "tulip-v4" : dependencies $deps : $sources;
+project tabs : toolset "tulip-v7" : dependencies $deps : $sources;
 
 tabs.prologue() {
     var option type list;
