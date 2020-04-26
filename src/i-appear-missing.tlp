@@ -1,0 +1,21 @@
+.song{"I appear missing -\nQueens of the Stone Age"}
+.transcriber{"Rafael Santiago"}
+
+.literal{"[Verses riff]"};
+.append{"part/i-appear-missing-verses-riff.tlp"};
+
+.literal{"[Chorus]"};
+.append{"part/i-appear-missing-chorus.tlp"};
+
+.literal{"[Bridge]"};
+.append{"part/i-appear-missing-bridge.tlp"};
+
+.literal{"[Pre-solo]"};
+.append{"part/i-appear-missing-pre-solo.tlp"};
+
+.literal{"[Solo]"};
+.append{"part/i-appear-missing-solo.tlp"};
+
+.literal{""};
+.literal{"[Song ending]"};
+.append{"part/i-appear-missing-ending.tlp"};
