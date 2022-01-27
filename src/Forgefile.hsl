@@ -16,6 +16,12 @@ tabs.prologue() {
         hefesto.project.abort(add_tabs($option));
     }
 
+    $option = hefesto.sys.get_option("get-tab");
+
+    if ($option.count() > 0) {
+        hefesto.project.abort(get_tabs($option));
+    }
+
     $option = hefesto.sys.get_option("gen-tab");
 
     if ($option.count() > 0) {
@@ -235,4 +241,102 @@ local function part_pattern(filename type string) : result type string {
         $filename.replace("\\.tlp$", "");
     }
     result $filename + "-*.tlp";
+}
+
+local function get_tabs(main_tab_files type list) : result type int {
+    var current_tab_files type list;
+    var m type int;
+    var err type int;
+    var main_tab_path type string;
+    var files2unlock type string;
+
+    $err = 1;
+
+    $m = 0;
+    while ($m < $main_tab_files.count()) {
+        $main_tab_path = $main_tab_files.item($m);
+        if (isfile($main_tab_path)) {
+            $files2unlock = $files2unlock + $main_tab_path + " " + hefesto.sys.make_path("part", part_pattern($main_tab_path)) + " ";
+        }
+        $m = $m + 1;
+    }
+
+    $err = hefesto.sys.run("blackcat unlock " + $files2unlock);
+
+    if ($err != 0) {
+        result $err;
+    }
+
+    $err = 0;
+
+    $m = 0;
+    while ($m < $main_tab_files.count()) {
+        $main_tab_path = $main_tab_files.item($m);
+        if (isfile($main_tab_path)) {
+            $err = $err + zip_tab($main_tab_path);
+        }
+        $m = $m + 1;
+    }
+
+    result $err;
+}
+
+local function zip_tab(main_tab_path type string) : result type int {
+    var files2zip type list;
+
+    $files2zip.add_item($main_tab_path);
+
+    if (hefesto.sys.cd("part")) {
+        var parts_pattern type string;
+        $parts_pattern = $main_tab_path;
+        $parts_pattern.replace("\\.tlp$", "-.*\\.tlp$");
+        $files2zip.ls($parts_pattern);
+        hefesto.sys.cd("..");
+    }
+
+    var out_zip_path type string;
+    $out_zip_path = $main_tab_path;
+    $out_zip_path.replace("\\.tlp$", ".zip");
+
+    var out_dir type list;
+    $out_dir = hefesto.sys.get_option("out-dir");
+    if ($out_dir.count() > 0) {
+        $out_zip_path = hefesto.sys.make_path($out_dir.item(0), $out_zip_path);
+    }
+
+    result zip($files2zip, $out_zip_path);
+}
+
+local function zip(files type list, out_path type string) : result type int {
+    var err type int;
+    $err = 1;
+    if (has_7z()) {
+        var cmdfiles type string;
+        var f type int;
+        $f = 0;
+        while ($f < $files.count()) {
+            var curr_file type string;
+            $curr_file = $files.item($f);
+            if ($curr_file.match(".*[/\\\\]part[/\\\\]") > 0) {
+                $curr_file.replace("^.*[/\\\\]part[/\\\\]", "part/");
+            }
+            $cmdfiles = $cmdfiles + " " + $curr_file;
+            $f = $f + 1;
+        }
+        $err = hefesto.sys.run("7z a " + $out_path + $cmdfiles + " >nul 2>&1");
+    } else if (has_zip()) {
+    }
+    result $err;
+}
+
+local function has_zip() : result type int {
+    # TODO(Rafael): Give support for zip.
+    result 0;
+}
+
+local function has_7z() : result type int {
+    if (hefesto.sys.os_name() != "windows") {
+        result 0;
+    }
+    result (hefesto.sys.run("7z >nul 2>&1") == 0);
 }
